@@ -17,3 +17,21 @@ api_version = 6
 ---- Can specify a custom icon for this mod!
 icon_atlas = "modicon.xml"
 icon = "modicon.tex"
+
+configuration_options ={
+	{
+	name = "fetch_ring",
+	label = "Should ring be spawned near a player?",
+	options =
+	{
+	{
+	description = "Yes",
+	data = true
+	},
+	{
+	description = "No",
+	data = false
+	}		
+	},
+	default = "No",	},
+	}
