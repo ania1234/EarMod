@@ -8,6 +8,8 @@ local x, y, z
 
 GLOBAL.STRINGS.NAMES.TELEPORTATO_RING = "Ear-Ring"
 
+
+
 local function GetPlayer(prefab)
 	player = prefab
 	x, y, z = prefab.Transform:GetWorldPosition()
@@ -19,23 +21,26 @@ local function GetPlayer(prefab)
 	end
 end
 
-local function OnPutInInventory(prefab)
+local function OnRingPutInInventory(prefab)
 	print("OnPutInInventory")
-	local creature = GLOBAL.SpawnPrefab("ear")
-	print(creature)
-	if creature~=nil then
-		if player~=nil then
-			print("spawning creature")
-			x, y, z = player.Transform:GetWorldPosition()
-			creature.Transform:SetPosition(x, y, z)	
-			creature.components.follower.leader = prefab
+	for i = 0,359,60
+	do
+		local creature = GLOBAL.SpawnPrefab("ear")
+		print(creature)
+		if creature~=nil then
+			if player~=nil then
+				print("spawning creature")
+				x, y, z = player.Transform:GetWorldPosition()
+				creature.Transform:SetPosition(x+10*math.sin(math.rad(i)), y, z+10*math.cos(math.rad(i)))	
+				creature.components.follower.leader = prefab
+			end
 		end
 	end
 end
 
 local function InitializeRingProperties(prefab)
 	ring = prefab
-	prefab.components.inventoryitem:SetOnPutInInventoryFn(OnPutInInventory)
+	prefab.components.inventoryitem:SetOnPutInInventoryFn(OnRingPutInInventory)
 end
 
 AddSimPostInit(GetPlayer)
