@@ -21,7 +21,7 @@ icon = "modicon.tex"
 configuration_options ={
 	{
 	name = "fetch_ring",
-	label = "Should ring be spawned near a player?",
+	label = "Spawn ring nearby?",
 	options =
 	{
 	{

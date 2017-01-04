@@ -21,8 +21,20 @@ local function OnStartFollowing(inst)
     inst:AddTag("companion") 
 end
 
-local function ShouldKeepTarget(inst, target)
-    return true
+local function NormalRetargetFn(inst)
+    return FindEntity(inst, TUNING.PIG_TARGET_DIST,
+        function(guy)
+            if not guy.LightWatcher or guy.LightWatcher:IsInLight() then
+                return guy:HasTag("monster") and guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) and not 
+                (inst.components.follower.leader ~= nil and guy:HasTag("abigail"))
+            end
+        end)
+end
+local function NormalKeepTargetFn(inst, target)
+    --give up on dead guys, or guys in the dark, or werepigs
+    return inst.components.combat:CanTarget(target)
+           and (not target.LightWatcher or target.LightWatcher:IsInLight())
+           and not (target.sg and target.sg:HasStateTag("transform") )
 end
 
 local function OnSave(inst, data)
@@ -41,9 +53,7 @@ local function init_prefab()
 
 	--[NEW] First we create an entity.
 	local inst = CreateEntity()
-
-	    
-    inst:AddTag("companion")
+  
     inst:AddTag("character")
     inst:AddTag("scarytoprey")
     inst:AddTag("notraptrigger")
@@ -73,8 +83,8 @@ local function init_prefab()
 
 	--print("   combat")
     inst:AddComponent("combat")
-    inst.components.combat.hiteffectsymbol = "chester_body"
-    inst.components.combat:SetKeepTargetFunction(ShouldKeepTarget)
+    inst.components.combat.hiteffectsymbol = "ear_middle"
+    inst.components.combat:SetKeepTargetFunction(NormalKeepTargetFn)
     --inst:ListenForEvent("attacked", OnAttacked)
 	
     --print("   health")
@@ -90,12 +100,33 @@ local function init_prefab()
 	--print("   knownlocations")
     inst:AddComponent("knownlocations")
 	
-	    --print("   follower")
+	--print("   follower")
     inst:AddComponent("follower")
     inst:ListenForEvent("stopfollowing", OnStopFollowing)
     inst:ListenForEvent("startfollowing", OnStartFollowing)
 
-
+	--print("	inspectable")
+    inst:AddComponent("inspectable")
+    inst.components.inspectable.getstatus = function(inst)
+			return "EAR"
+    end
+	inst.components.inspectable:SetDescription("It's just a normal ear!");
+	
+	--print("	lootdropper")
+	inst:AddComponent("lootdropper")
+    inst.components.lootdropper:SetLoot({})
+    inst.components.lootdropper:AddRandomLoot("meat",1)
+    inst.components.lootdropper:AddRandomLoot("pigskin",1)
+    inst.components.lootdropper.numrandomloot = 1
+	
+	--print("	talker")
+	inst:AddComponent("talker")
+    --inst.components.talker.ontalk = ontalk
+    inst.components.talker.fontsize = 35
+    inst.components.talker.font = TALKINGFONT
+    --inst.components.talker.colour = Vector3(133/255, 140/255, 167/255)
+    inst.components.talker.offset = Vector3(0,-400,0)
+	
     --print("   sg")
     inst:SetStateGraph("SGear")
     inst.sg:GoToState("idle")

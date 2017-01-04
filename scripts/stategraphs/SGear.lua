@@ -46,13 +46,32 @@ local states=
         onenter = function(inst)
             inst.AnimState:PlayAnimation("death")
             inst.Physics:Stop()
-            RemovePhysicsColliders(inst)            
+            RemovePhysicsColliders(inst) 
+			inst.components.lootdropper:DropLoot(Vector3(inst.Transform:GetWorldPosition())) 			
         end,
+    },
+	
+	State{
+        name = "attack",
+        tags = {"attack", "busy"},
+        
+        onenter = function(inst)
+            inst.SoundEmitter:PlaySound("dontstarve/pig/attack")
+            inst.SoundEmitter:PlaySound("dontstarve/wilson/attack_whoosh")
+            inst.components.combat:StartAttack()
+            inst.Physics:Stop()
+            inst.AnimState:PlayAnimation("attack")
+        end,
+        
+        events=
+        {
+            EventHandler("animover", function(inst) inst.components.combat:DoAttack() inst.sg:RemoveStateTag("attack") inst.sg:RemoveStateTag("busy") inst.sg:GoToState("idle") end),
+        },
     },
 	
 }
 
-	CommonStates.AddSimpleState(states, "hit", "hit", {"busy"})
+	CommonStates.AddSimpleState(states, "hit", "attack", {"busy"})
 
 --[NEW] Event handlers are how stategraphs get told what happening with the prefab.  The stategraph then decides how it wants
 --		to present that to the user which usually involves some combination of animation and audio.
@@ -90,6 +109,7 @@ local event_handlers=
         end
     end),
     EventHandler("death", function(inst) inst.sg:GoToState("death") end),
+	EventHandler("attack", function(inst) inst.sg:GoToState("attack") end),
 }
 
 --[NEW] Register our new stategraph and set the default state to 'idle'.

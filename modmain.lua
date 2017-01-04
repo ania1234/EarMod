@@ -7,6 +7,8 @@ local ring
 local x, y, z
 
 GLOBAL.STRINGS.NAMES.TELEPORTATO_RING = "Ear-Ring"
+GLOBAL.STRINGS.NAMES.EAR = "Ear"
+GLOBAL.STRINGS.EAR_TALK_CASUAL_CONVERSATION = {"Hi!", "Do you believe \n in life after love?", "The weather is nice", "I disagree", "How about a quick workout?", "Would you like a lunch?", "I once fucked my uncle", "Have you seen his shoes?", "No Way!", "SERIOUSLY??!!??", "I would never do that!", "I'm not sure about this topic", "Her career is in the gutter", "How are you?", "Desperate times call for desperate measures", "I try to keep\n a healthy lifestyle", "Hi Mom!", "How is Maggie doing?", "That does not go\n with this dress", "Perfect topic for\n a gardenparty conversation", "Never!", "Maybe, maybe...", "...and a bit of garlic olive oil..", "Were the effects visible?", "You can fight poverty\n with private investment", "Comrade!", "Is Tom on vacation?", "Vegan and gluten free", "Is there any dessert left?", "Yes", "No", "How are you holding up, my dear?", "Oh my...", "Can I help you?", "How was your day off?", "Can you imagine that?", "That is kind of offensive.", "I guess you can call me conservative", "I made love.", "That was\n a terrible mistake.", "Would you like it?", "Awesome!", "Pardon?", "Disembodied and left in the canals", "Yeah, but was the carrot used?", "I would rather not", "Maybe tomorrow","I would love to try!", "The rumor is he got a promotion", "He seems interesting enough", "Two at the price of one", "I like to watch you cry", "Tell me where\n did you sleep last night?", "I'm telling you,\n it is the best!", "Her new research\n is highly acclaimed", "She self-published", "Was it any good?"}
 
 
 
@@ -33,6 +35,7 @@ local function OnRingPutInInventory(prefab)
 				x, y, z = player.Transform:GetWorldPosition()
 				creature.Transform:SetPosition(x+10*math.sin(math.rad(i)), y, z+10*math.cos(math.rad(i)))	
 				creature.components.follower.leader = prefab
+				creature.Angle = i
 			end
 		end
 	end
