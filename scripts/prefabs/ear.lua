@@ -68,10 +68,10 @@ local function init_prefab()
     anim:SetBank("ear")
     anim:SetBuild("ear")
 
-    inst.entity:AddDynamicShadow()
-    inst.DynamicShadow:SetSize( 2, 1.5 )
+	local shadow = inst.entity:AddDynamicShadow()
+	shadow:SetSize( 1.5, .75 )
 	
-    MakeCharacterPhysics(inst, 10, .5)
+    MakeCharacterPhysics(inst, 50, .5)
 	    --print("   Collision")
     inst.Physics:SetCollisionGroup(COLLISION.CHARACTERS)
     inst.Physics:ClearCollisionMask()
