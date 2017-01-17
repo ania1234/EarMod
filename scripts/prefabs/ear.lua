@@ -113,8 +113,7 @@ local function init_prefab()
 	local shadow = inst.entity:AddDynamicShadow()
 	shadow:SetSize( 1.5, .75 )
 	
-    MakeCharacterPhysics(inst, 50, .5)
-	    --print("   Collision")
+    MakeCharacterPhysics(inst, 10, .5)
     inst.Physics:SetCollisionGroup(COLLISION.CHARACTERS)
     inst.Physics:ClearCollisionMask()
     inst.Physics:CollidesWith(COLLISION.WORLD)
@@ -163,11 +162,9 @@ local function init_prefab()
 	
 	--print("	talker")
 	inst:AddComponent("talker")
-    --inst.components.talker.ontalk = ontalk
     inst.components.talker.fontsize = 35
     inst.components.talker.font = TALKINGFONT
-    --inst.components.talker.colour = Vector3(133/255, 140/255, 167/255)
-    inst.components.talker.offset = Vector3(0,-400,0)
+    inst.components.talker.offset = Vector3(0,-700,0)
 	
     --print("   sg")
     inst:SetStateGraph("SGear")
@@ -176,10 +173,7 @@ local function init_prefab()
     --print("   brain")
     inst:SetBrain(brain)
 
-    -- inst.OnSave = OnSave
-	-- inst.OnLoad = OnLoad
-    -- inst.OnPreLoad = OnPreLoad
-	-- inst.OnLoadPostPass = OnLoadPostPass
+
     return inst
 end
 

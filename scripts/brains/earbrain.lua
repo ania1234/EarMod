@@ -20,10 +20,6 @@ local function KeepFaceTargetFn(inst, target)
     return inst.components.follower.leader == target
 end
 
-local function FindFoodAction(inst)
-	return nil
-end
-
 local EarBrain = Class(Brain, function(self, inst)
     Brain._ctor(self, inst)
 end)
@@ -33,12 +29,24 @@ local function SetAngle(inst)
 end
 
 function EarBrain:OnStart()
-    local root = 
-    PriorityNode({
+	local clock = GetClock()
+	local day = WhileNode( function() return clock and not clock:IsNight() end, "IsDay",
+    PriorityNode{
 		--SetAngle(self.inst),
 		Follow(self.inst, function() return self.inst.components.follower.leader end, MIN_FOLLOW_DIST, TARGET_FOLLOW_DIST, MAX_FOLLOW_DIST),
 		ChattyNode(self.inst, STRINGS.EAR_TALK_CASUAL_CONVERSATION, Wander(self.inst, function() return self.inst.components.knownlocations:GetLocation("home") end, MAX_WANDER_DIST)),
-    }, .25)
+    }, 0.5)
+	local night = WhileNode( function() return clock and clock:IsNight() end, "IsNight",
+    PriorityNode{
+		--SetAngle(self.inst),
+		Follow(self.inst, function() return self.inst.components.follower.leader end, MIN_FOLLOW_DIST, TARGET_FOLLOW_DIST, MAX_FOLLOW_DIST),
+		ChattyNode(self.inst, STRINGS.EAR_TALK_NIGHT_CONVERSATION, Wander(self.inst, function() return self.inst.components.knownlocations:GetLocation("home") end, MAX_WANDER_DIST)),
+    }, 1)
+    local root = 
+    PriorityNode({
+		day,
+		night
+    }, .5)
     self.bt = BT(self.inst, root)
 end
 

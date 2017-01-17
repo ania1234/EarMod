@@ -17,15 +17,10 @@ function PrefabHolder:AddFollower(follower)
 end
 
 function PrefabHolder:OnSave()
-    print("PrefabHolder - on save")
     local saved = false
     local followers = {}
     for k,v in pairs(self.followers) do
         saved = true
-		print("inserting follower")
-		print(k)
-		print(k.GUID)
-		print(v)
         table.insert(followers, k.GUID)
     end
     
