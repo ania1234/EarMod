@@ -3,7 +3,7 @@ require "behaviours/wander"
 require "behaviours/faceentity"
 require "behaviours/panic"
 require "behaviours/chattynode"
-
+require "behaviours/doaction"
 
 local MIN_FOLLOW_DIST = 0
 local MAX_FOLLOW_DIST = 7
@@ -25,14 +25,18 @@ local EarBrain = Class(Brain, function(self, inst)
 end)
 
 local function SetAngle(inst)
-	inst.components.locomotor:GoToPoint(inst.components.follower.leader:GetPosition())
+	local homePos = inst.components.follower.leader:GetPosition()
+	homePos.x = homePos.x + 5*math.sin(math.rad(inst.Angle))
+	homePos.z = homePos.z + 10*math.cos(math.rad(inst.Angle))
+	return BufferedAction(inst, nil, ACTIONS.WALKTO, nil, homePos)
 end
+
 
 function EarBrain:OnStart()
 	local clock = GetClock()
 	local day = WhileNode( function() return clock and not clock:IsNight() end, "IsDay",
     PriorityNode{
-		--SetAngle(self.inst),
+		DoAction(self.inst, SetAngle, "Set Angle", true ),
 		Follow(self.inst, function() return self.inst.components.follower.leader end, MIN_FOLLOW_DIST, TARGET_FOLLOW_DIST, MAX_FOLLOW_DIST),
 		ChattyNode(self.inst, STRINGS.EAR_TALK_CASUAL_CONVERSATION, Wander(self.inst, function() return self.inst.components.knownlocations:GetLocation("home") end, MAX_WANDER_DIST)),
     }, 0.5)

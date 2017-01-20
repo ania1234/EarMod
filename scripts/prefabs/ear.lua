@@ -40,52 +40,11 @@ end
 local function OnSave(inst, data)
 	print("ear - OnSave") 
     data.Angle = inst.Angle
-	
-	local ringDict = {}
-	table.insert(ringDict,  inst.components.follower.leader.entity )
-	print(inst.components.follower.leader.entity)
-	print(inst.components.follower.leader)
-	print(inst.components.follower.leader.GUID)
-	data.ringDict = ringDict
-	--print(ringDict)
-	-- for key, thing in pairs(ringDict) do
-		-- print(key)
-		-- print(thing)
-	-- end
-	return data, ringDict
 end
+
 
 local function OnLoad(inst, data)
 	print("ear - OnLoad") 
-	print(data.ringDict)
-	inst.ringDict = data and data.ringDict or {}
-end
-
-local function OnLoadPostPass(inst, newents, data)
-	print("ear - OnLoadPostPass") 
-	print(inst.ringDict)
-	print(newents)
-	for key, thing in pairs(newents) do
-		print(key)
-		print(thing)
-		print(thing[0])
-	end
-	local self_stuff = inst.ringDict
-	print(#self_stuff)
-	-- for key, thing in pairs(self_stuff) do
-		-- print(key)
-		-- print(thing)
-		-- local thingy = newents[thing.GUID]
-		-- if thingy then
-			-- -- swap temp table for entity
-			-- self_stuff[key] = thingy.entity
-			-- inst.components.follower.leader = thingy
-		-- end
-	-- end
-end
-
-local function OnPreLoad(inst, data)
-	print("ear - OnPreLoad") 
     if not data then return end
 	inst.Angle = data.Angle 
 end
@@ -173,6 +132,8 @@ local function init_prefab()
     --print("   brain")
     inst:SetBrain(brain)
 
+	 inst.OnSave = OnSave
+	inst.OnLoad = OnLoad
 
     return inst
 end
