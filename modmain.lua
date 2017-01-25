@@ -139,7 +139,7 @@ local function OnRingPutInInventory(prefab)
 	print(prefab.Used)
 	if not prefab.Used then
 		prefab.Used = true
-		for i = 0,359,600
+		for i = 0,359,60
 		do
 			local creature = GLOBAL.SpawnPrefab("ear")
 			print(creature)
