@@ -7,9 +7,6 @@ local states=
     State{
 
         name = "idle",
-
-        --[NEW] Tags are how we can classify states.  The 'canrotate' tag tells the animation system that these animations can
-		--   	be flipped based on which way the creature is facing which means we don't have to create multiple animations.
         tags = {"idle", "canrotate"},
 
         --[NEW] Here is how we define what happens when we enter this state.
@@ -56,8 +53,6 @@ local states=
         tags = {"attack", "busy"},
         
         onenter = function(inst)
-            inst.SoundEmitter:PlaySound("dontstarve/pig/attack")
-            inst.SoundEmitter:PlaySound("dontstarve/wilson/attack_whoosh")
             inst.components.combat:StartAttack()
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("attack")

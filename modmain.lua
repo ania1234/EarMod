@@ -139,7 +139,7 @@ local function OnRingPutInInventory(prefab)
 	print(prefab.Used)
 	if not prefab.Used then
 		prefab.Used = true
-		for i = 0,359,60
+		for i = 0,359,600
 		do
 			local creature = GLOBAL.SpawnPrefab("ear")
 			print(creature)
@@ -147,7 +147,7 @@ local function OnRingPutInInventory(prefab)
 				if player~=nil then
 					print("spawning creature because of pick up")
 					x, y, z = player.Transform:GetWorldPosition()
-					creature.Transform:SetPosition(x+5*math.sin(math.rad(i)), y, z+10*math.cos(math.rad(i)))	
+					creature.Transform:SetPosition(x+6*math.sin(math.rad(i)), y, z+6*math.cos(math.rad(i)))	
 					creature.Angle = i
 					prefab.components.leader:AddFollower(creature)
 					print(creature.components.follower.leader)

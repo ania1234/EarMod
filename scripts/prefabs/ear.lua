@@ -11,14 +11,17 @@ local assets=
 
 local Angle=0
 
+local MAX_TARGET_SHARES = 1
+local SHARE_TARGET_DIST = 10
+
 local function OnStopFollowing(inst) 
     print("ear - OnStopFollowing")
-    inst:RemoveTag("companion") 
+    --inst:RemoveTag("companion") 
 end
 
 local function OnStartFollowing(inst) 
     print("ear - OnStartFollowing")
-    inst:AddTag("companion") 
+    --inst:AddTag("companion") 
 end
 
 local function NormalRetargetFn(inst)
@@ -47,6 +50,13 @@ local function OnLoad(inst, data)
 	print("ear - OnLoad") 
     if not data then return end
 	inst.Angle = data.Angle 
+end
+
+local function OnAttacked(inst, data)
+    print(inst, "OnAttacked")
+    local attacker = data.attacker
+    inst.components.combat:SetTarget(attacker)
+    inst.components.combat:ShareTarget(attacker, SHARE_TARGET_DIST, function(dude) return dude:HasTag("ear") end, MAX_TARGET_SHARES)
 end
 
 --[NEW] This function creates a new entity based on a prefab.
@@ -85,7 +95,11 @@ local function init_prefab()
     inst:AddComponent("combat")
     inst.components.combat.hiteffectsymbol = "ear_middle"
     inst.components.combat:SetKeepTargetFunction(NormalKeepTargetFn)
-    --inst:ListenForEvent("attacked", OnAttacked)
+	inst.components.combat:SetDefaultDamage(TUNING.PIG_GUARD_DAMAGE)
+    inst.components.combat:SetAttackPeriod(TUNING.PIG_GUARD_ATTACK_PERIOD)
+    inst.components.combat:SetRetargetFunction(1, NormalRetargetFn)
+    inst.components.combat:SetTarget(nil)
+    inst:ListenForEvent("attacked", OnAttacked)
 	
     --print("   health")
     inst:AddComponent("health")
