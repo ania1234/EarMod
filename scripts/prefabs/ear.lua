@@ -11,14 +11,17 @@ local assets=
 
 local Angle=0
 
+local MAX_TARGET_SHARES = 5
+local SHARE_TARGET_DIST = 10
+
 local function OnStopFollowing(inst) 
     print("ear - OnStopFollowing")
-    inst:RemoveTag("companion") 
+    --inst:RemoveTag("companion") 
 end
 
 local function OnStartFollowing(inst) 
     print("ear - OnStartFollowing")
-    inst:AddTag("companion") 
+    --inst:AddTag("companion") 
 end
 
 local function NormalRetargetFn(inst)
@@ -42,10 +45,18 @@ local function OnSave(inst, data)
     data.Angle = inst.Angle
 end
 
-local function OnPreLoad(inst, data)
-	print("ear - OnPreLoad") 
+
+local function OnLoad(inst, data)
+	print("ear - OnLoad") 
     if not data then return end
 	inst.Angle = data.Angle 
+end
+
+local function OnAttacked(inst, data)
+    print(inst, "OnAttacked")
+    local attacker = data.attacker
+    inst.components.combat:SetTarget(attacker)
+    inst.components.combat:ShareTarget(attacker, SHARE_TARGET_DIST, function(dude) return dude:HasTag("ear") end, MAX_TARGET_SHARES)
 end
 
 --[NEW] This function creates a new entity based on a prefab.
@@ -68,11 +79,10 @@ local function init_prefab()
     anim:SetBank("ear")
     anim:SetBuild("ear")
 
-    inst.entity:AddDynamicShadow()
-    inst.DynamicShadow:SetSize( 2, 1.5 )
+	local shadow = inst.entity:AddDynamicShadow()
+	shadow:SetSize( 1.5, .75 )
 	
     MakeCharacterPhysics(inst, 10, .5)
-	    --print("   Collision")
     inst.Physics:SetCollisionGroup(COLLISION.CHARACTERS)
     inst.Physics:ClearCollisionMask()
     inst.Physics:CollidesWith(COLLISION.WORLD)
@@ -85,7 +95,11 @@ local function init_prefab()
     inst:AddComponent("combat")
     inst.components.combat.hiteffectsymbol = "ear_middle"
     inst.components.combat:SetKeepTargetFunction(NormalKeepTargetFn)
-    --inst:ListenForEvent("attacked", OnAttacked)
+	inst.components.combat:SetDefaultDamage(TUNING.PIG_GUARD_DAMAGE)
+    inst.components.combat:SetAttackPeriod(TUNING.PIG_GUARD_ATTACK_PERIOD)
+    inst.components.combat:SetRetargetFunction(1, NormalRetargetFn)
+    inst.components.combat:SetTarget(nil)
+    inst:ListenForEvent("attacked", OnAttacked)
 	
     --print("   health")
     inst:AddComponent("health")
@@ -121,11 +135,9 @@ local function init_prefab()
 	
 	--print("	talker")
 	inst:AddComponent("talker")
-    --inst.components.talker.ontalk = ontalk
     inst.components.talker.fontsize = 35
     inst.components.talker.font = TALKINGFONT
-    --inst.components.talker.colour = Vector3(133/255, 140/255, 167/255)
-    inst.components.talker.offset = Vector3(0,-400,0)
+    inst.components.talker.offset = Vector3(0,-700,0)
 	
     --print("   sg")
     inst:SetStateGraph("SGear")
@@ -134,8 +146,8 @@ local function init_prefab()
     --print("   brain")
     inst:SetBrain(brain)
 
-    inst.OnSave = OnSave
-    inst.OnPreLoad = OnPreLoad
+	 inst.OnSave = OnSave
+	inst.OnLoad = OnLoad
 
     return inst
 end
