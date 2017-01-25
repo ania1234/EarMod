@@ -11,7 +11,7 @@ local assets=
 
 local Angle=0
 
-local MAX_TARGET_SHARES = 1
+local MAX_TARGET_SHARES = 5
 local SHARE_TARGET_DIST = 10
 
 local function OnStopFollowing(inst) 
